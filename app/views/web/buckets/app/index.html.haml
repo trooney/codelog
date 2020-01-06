@@ -1,0 +1,4 @@
+- content_for :head_javascript do
+  = javascript_pack_tag 'bucket'
+
+%div#BucketApp.w-100.h-100{'data-react' => "#{@data_react.to_json}".html_safe }

@@ -1,0 +1,13 @@
+%h2 Sign in
+= simple_form_for(resource, as: resource_name, url: session_path(resource_name), html: { novalidate: false }) do |f|
+  .form-inputs
+    = f.input :email,
+      label: 'Email',
+      required: true,
+      input_html: { autocomplete: "email" }
+    = f.input :password,
+      label: 'Password',
+      required: true,
+      input_html: { autocomplete: "password" }
+  .form-actions
+    = f.button :submit, "Sign in", id: 'sign-in-submit', class: 'btn-success btn-block btn-lg mb-2'

@@ -1,0 +1,24 @@
+%meta{:content => "width=device-width,initial-scale=1", :name => "viewport"}/
+%meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
+%title CodelogOrg V4
+-#= favicon_link_tag "/favicon.ico", rel: "shortcut icon", type: "image/x-icon"
+= csrf_meta_tags
+= csp_meta_tag
+
+- if params['theme'].to_s.present?
+  = stylesheet_link_tag "application_#{params['theme'].to_s}", media: 'all'
+- else
+  = stylesheet_link_tag 'application', media: 'all'
+
+- if content_for? :head_javascript
+  = yield :head_javascript
+
+-#- theme = :nothing
+-#- if theme == :remote
+-#  %link{:href => "https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css", :rel => "stylesheet"}/
+-#- if theme == :custom
+-#  = stylesheet_link_tag 'custom', media: 'all'
+-#- if theme == :light
+-#  %link{:href => "https://bootswatch.com/4/litera/bootstrap.min.css", :rel => "stylesheet"}/
+-#- if theme == :dark
+-#  %link{:href => "https://bootswatch.com/4/solar/bootstrap.min.css", :rel => "stylesheet"}/

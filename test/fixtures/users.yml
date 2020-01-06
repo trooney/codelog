@@ -1,0 +1,4 @@
+johndoe:
+  email: johndoe2@example.com
+  display_name: john doe
+  confirmed_at: <%= Time.now %>

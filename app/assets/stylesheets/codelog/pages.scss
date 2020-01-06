@@ -1,0 +1,10 @@
+.page-devise {
+  .card-body {
+    @extend .p-4;
+  }
+  .card h2 {
+    @extend .mb-4;
+    @extend .mt-2;
+    @extend .text-center;
+  }
+}

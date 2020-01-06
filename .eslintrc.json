@@ -1,0 +1,36 @@
+{
+  "parser": "babel-eslint",
+  "plugins": [
+    "babel",
+    "react-hooks"
+  ],
+  "extends": [
+    "standard",
+    "plugin:react/recommended"
+  ],
+  "rules": {
+    "indent": 0,
+    "space-before-function-paren": 0,
+    "react/react-in-jsx-scope": 0,
+    "react/prop-types": 0,
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
+  },
+  "settings": {
+    "react": {
+      "version": "16.9.0"
+    }
+  },
+  "env": {
+    "es6": true,
+    "browser": true,
+    "node": true
+  },
+  "globals": {
+    "alert": true,
+    "Math": true,
+    "$": true,
+    "React": true,
+    "moment": true
+  }
+}

@@ -1,0 +1,18 @@
+%nav.navbar.navbar-lg.navbar-expand-lg.navbar-transparant.navbar-dark.navbar-absolute.bg-codelog-dark-gray
+  .container.pl-sm-3.pr-sm-3
+    %a.navbar-brand{:href => "/"} CodeLog
+    %button.navbar-toggler{"data-target" => "#navbar-collapse", "data-toggle" => "collapse", :type => "button"}
+      %span.navbar-toggler-icon
+    #navbar-collapse.collapse.navbar-collapse
+      - if current_user.present?
+        %ul.navbar-nav.ml-auto
+          %li.nav-item
+          = link_to "Sign Out", destroy_user_session_path, class: 'nav-link text-light'
+        %form.form-inline.ml-2
+          = link_to "Launch", web_bucket_index_path(bucket_id: current_user.default_bucket.id), class: 'btn btn-outline-light'
+      - else
+        %ul.navbar-nav.ml-auto
+          %li.nav-item
+          = link_to "Sign in", new_session_path(resource_name), class: 'nav-link text-light'
+        %form.form-inline.ml-2
+          = link_to "Sign up", new_registration_path(resource_name), class: 'btn btn-outline-light'

@@ -1,0 +1,6 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+first_for_johndoe:
+  bucket: for_johndoe
+  creator: johndoe
+  text_blob: MyText

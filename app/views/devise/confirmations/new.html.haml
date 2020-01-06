@@ -1,0 +1,10 @@
+%h2 Resend confirmation
+= simple_form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post, novalidate: true }) do |f|
+  = f.full_error :confirmation_token
+  .form-inputs
+    = f.input :email,
+      required: true,
+      value: (resource.pending_reconfirmation? ? resource.unconfirmed_email : resource.email),
+      input_html: { autocomplete: "email" }
+  .form-actions
+    = f.button :submit, "Resend", class: 'btn-success btn-block btn-lg mb-2'

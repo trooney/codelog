@@ -1,0 +1,374 @@
+/**
+  ideas boostnote https://boostnote.io/assets/img/top1.png
+ */
+
+/**
+ Ace Editor Fixes
+ */
+
+.ace_hidden-cursors {
+  opacity: 0;
+}
+
+/**
+ App
+ */
+
+.text-small {
+  font-size: .9rem;
+}
+
+.text-smaller {
+  font-size: .8rem;
+}
+
+.text-smallest {
+  font-size: .7rem;
+}
+
+.tag-chip {
+  @extend .d-inline-block;
+  @extend .rounded;
+  @extend .rounded-pill;
+  border-radius: 100%;
+  padding-top: .1rem;
+  padding-bottom: .1rem;
+  padding-left: .65rem;
+  padding-right: .6rem;
+  font-size: 0.8rem;
+  background-color: $jumbotron-bg;
+  color: lighten($body-color, 20%);
+  white-space: nowrap;
+  user-select: none;
+
+  i {
+    margin-left: .25rem;
+    //color: rgba(0,0,0,0.35);
+    cursor: pointer;
+  }
+
+}
+.tag-chip-removable:after {
+  //content: 'foobar';
+}
+
+#snow-container {
+  //height: calc(100% - 60px);
+}
+
+
+/**
+ General stuff
+ */
+
+body, head {
+  width: 100%;
+  height: 100%;
+}
+
+
+.grid-pane-col {
+  @extend .d-flex;
+  @extend .flex-column;
+  @extend .h-100;
+}
+
+.grid-pane-row-fixed {
+  @extend .flex-shrink-1;
+}
+
+.grid-pane-row-dynamic {
+  @extend .flex-grow-1;
+  @extend .overflow-auto;
+}
+
+
+/*
+ Simple layout stuff
+ */
+
+.resource-item {
+  @extend .border-bottom;
+  @extend .p-3;
+}
+
+.resource-item.active {
+  background: #f2f2f2;
+}
+.resource-footer {
+  @extend .mt-1;
+}
+
+/**
+ Sidebar
+ */
+
+
+
+.sidebar-container {
+  @extend .h-100;
+  background: #2e3235;
+  color: #939395;
+  user-select: none;
+}
+
+.sidebar-lg {
+  width: 250px;
+}
+
+.sidebar-sm {
+  @extend .flex-shrink-1;
+}
+
+.sidebar-emblem-container {
+  @extend .d-flex;
+  @extend .align-items-center;
+  color: #fff;
+}
+
+.sidebar-emblem-badge {
+  width: 2rem;
+  height: 2rem;
+  background: #ccc;
+  color: #000;
+  font-size: .85rem;
+  font-weight: bolder;
+  padding: .3rem;
+  border-radius: 999rem;
+  letter-spacing: .05rem;
+}
+
+.sidebar-emblem-text {
+  @extend .ml-2;
+  font-weight: 600;
+}
+
+.sidebar-name-container {
+  margin-top: -0.2rem;
+  margin-left: 2.5rem;
+  font-size: 0.8rem;
+  color: #c4c4c4;
+}
+
+.sidebar-create-note {
+  font-size: .95rem;
+}
+
+.sidebar-visibility-toggler {
+  padding: .2rem .75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  font-size: .9rem;
+  cursor: pointer;
+  z-index: 10;
+
+  .sidebar-lg & {
+    text-align: right;
+  }
+
+  .sidebar-sm & {
+    text-align: center;
+  }
+}
+
+.sidebar-nav-header {
+  @extend .d-flex;
+  padding: .3rem .5rem;
+  font-size: .85rem;
+  font-weight: 500;
+  color: #c4c4c4;
+  cursor: pointer;
+  &:hover {
+    background: lighten(#2e3235, 8%);
+  }
+  .fa-caret-down, .fa-caret-right {
+    text-indent: -5px;
+  }
+}
+
+.sidebar-nav-link {
+  white-space: nowrap;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+
+  .sidebar-lg & {
+    padding-left: 2.8rem;
+    padding-right: .75rem;
+    font-size: .75rem;
+    line-height: 1.4rem;
+  }
+
+  .sidebar-sm & {
+    padding: .4rem 0;
+    text-align: center;
+  }
+
+  &:hover {
+    background: lighten(#2e3235, 5%);
+  }
+
+  .fas, .far {
+    width: 1.1rem;
+  }
+}
+
+.sidebar-nav-header-active {
+  color: #fff;
+  background: lighten(#2e3235, 5%);
+}
+
+.sidebar-nav-link-active {
+  color: #fff;
+}
+
+.sidebar-quick-actions {
+  display: none;
+}
+
+/**
+ Searchbar column
+ */
+
+.searchbar-column {
+  background: #f9f9f9;
+  font-size: 0.9rem;
+}
+
+
+.searchbox-text-field,
+.searchbox-text-field:focus {
+  border: transparent !important;
+  background: transparent !important;
+  padding-left: 0;
+  outline: 0;
+  box-shadow: none !important;
+}
+
+
+.tagbox-container {
+  .tagbox-text-field {
+    height: calc(1.25em + 0.5rem + 2px);
+    padding: 0.2rem 0.4rem;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    border-radius: 0.2rem;
+
+    border: 0;
+    outline: 0;
+    box-shadow: none !important;
+  }
+}
+
+// Hides within Editor
+.editor-save {
+  padding-top: 0;
+  padding-bottom: 0;
+  line-height: 0.8rem;
+  font-size: 0.8rem;
+}
+
+  //.sidebar-sm {
+//  -webkit-animation: fade 2s;
+//  animation: fade 2s;
+//}
+//.sidebar-lg {
+//  -webkit-animation: alt 2s;
+//  animation: alt 2s;
+//}
+//
+//
+///* -fail- */
+//@-webkit-keyframes fade {
+//  from {
+//    flex: 0 0 16.6666666667%;
+//    max-width: 16.6666666667%;
+//
+//  }
+//  to {
+//    flex: 0 0 8.3333333333%;
+//    max-width: 8.3333333333%
+//  }
+//}
+//@-webkit-keyframes alt {
+//  from {
+//    flex: 0 0 8.3333333333%;
+//    max-width: 8.3333333333%
+//  }
+//  to {
+//    flex: 0 0 16.6666666667%;
+//    max-width: 16.6666666667%;
+//  }
+//}
+
+
+
+
+
+// Simple styling for message.
+.msg {
+  display: block;
+  margin-top: 8px;
+  padding: 8px 12px;
+
+  border: 1px solid #ddd;
+  border-radius: 3px;
+}
+
+
+
+/**
+ LoadingNote
+ */
+
+//@mixin nth-children($points...) {
+//  @each $point in $points {
+//    &:nth-child(#{$point}) {
+//      @content;
+//    }
+//  }
+//}
+//
+//.text-input__loading {
+//  @extend .border-bottom;
+//  @extend .pt-3;
+//  @extend .pb-3;
+//
+//  &--line {
+//    @extend .ml-3;
+//    height: 10px;
+//    margin-bottom: .45rem;
+//    border-radius: 4px;
+//
+//    animation: pulse 1.25s infinite ease-in-out;
+//  }
+//
+//  div {
+//    @include nth-children(1, 5, 9) {
+//      width: 150px;
+//    }
+//    @include nth-children(2) {
+//      width: 250px;
+//    }
+//    @include nth-children(3, 7) {
+//      width: 60px;
+//    }
+//    @include nth-children(4, 8) {
+//      width: 115px;
+//    }
+//  }
+//  div:last-child {
+//    width: 85px;
+//  }
+//}
+//
+//@keyframes pulse {
+//  0% {
+//    background-color: rgba(165, 165, 165, 0.1)
+//  }
+//  50% {
+//    background-color: rgba(165, 165, 165, 0.3)
+//  }
+//  100% {
+//    background-color: rgba(165, 165, 165, 0.1)
+//  }
+//}

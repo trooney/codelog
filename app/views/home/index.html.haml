@@ -1,0 +1,54 @@
+.position-relative.text-white.bg-codelog-dark-gray.pb-5.pt-4
+  .container
+    .row
+      .col-md-6.align-self-center
+        %h1.display-4.mb-3
+          A new way<br />to take notes.
+          -#Impress your clients,
+          -#%br/
+          -#surprise your team
+        %p.lead.mb-4 CodeLog is a note taking application inspired by the best development resources available online. Write, manage, and share your notes anytime, anywhere.
+        -#%p.lead.mb-4 Robust is a premium theme built with Bootstrap. The theme is fully customizable & can be used for any type of application.
+      / /.col-md-6
+      .col-md-5.ml-auto
+        .card
+          .card-body.text-dark
+            %h3.text-center.mt-3.mb-4 Join CodeLog Today
+            = render 'devise/registrations/create_form'
+
+.container.mt-5.mb-5
+  .row
+    .col-md-10.mx-auto
+      .row
+        .col-md-4.ml-auto
+          %h2 Open source. Now and forever.
+        .col-md-6.mr-auto
+          %p.lead.text-dark
+            Robust includes various demo pages for building your custom app, blog or landing page. All code is handwritten, all our components are optimized for desktop, tablet and mobile.
+  .row.mt-5
+    .col-md-4
+      .media
+        .icon.mr-3.bg-info
+          %i.far.fa-id-badge
+        .media-body
+          %h3.h4 Markdown
+          %p.text-dark.text-left
+            With mobile, tablet & desktop support it doesn't matter what device you're using. Robust is responsive in all browsers.
+    .col-md-4
+      .media
+        .icon.mr-3.bg-warning
+          %i.far.fa-hand-scissors
+        .media-body
+          %h3.h4 Collaborate
+          %p.text-dark.text-left
+            You don't need to be an expert to customize Robust. Our code is very readable and well documented.
+    .col-md-4
+      .media
+        .icon.mr-3.bg-danger
+          %i.far.fa-comments
+        .media-body
+          %h3.h4 Publicize
+          %p.text-dark.text-left
+            Robust is supported by specialists who provide quick and effective support. Usually an email reply takes <24h.
+
+= render partial: 'layouts/footer'

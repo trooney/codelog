@@ -1,0 +1,8 @@
+.container
+  .row
+    .col-6
+      %h3 Bucket Settings
+
+      = simple_form_for @bucket, url: { action: :update } do |f|
+        = f.input :name, placeholder: 'Name'
+        = f.button :submit, 'Save Bucket'

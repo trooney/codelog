@@ -1,0 +1,9 @@
+!!! 5
+%html{lang: "en"}
+  %head
+    = render partial: 'layouts/head'
+  %body
+    = render partial: 'layouts/flash'
+    - if defined?(@nav) && @nav
+      = render "layouts/#{@nav}"
+    = render partial: 'layouts/page'

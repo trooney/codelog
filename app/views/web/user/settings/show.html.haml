@@ -1,0 +1,27 @@
+.container
+  .row
+    .col-6
+
+      %h3 Profile
+      = simple_form_for current_user, url: { action: :update } do |f|
+        = f.input :display_name, placeholder: 'Display Name'
+        = f.association :default_bucket, collection: Bucket.for_user(current_user), include_blank: false
+        = f.button :submit, 'Save User'
+
+      %h3 Change your password
+      = simple_form_for current_user, url: { action: :update } do |f|
+        = f.error_notification
+        = f.input :reset_password_token, as: :hidden
+        = f.full_error :reset_password_token
+        .form-inputs
+          = f.input :password,
+            label: "New password",
+            required: true,
+            hint: ("#{@minimum_password_length} characters minimum" if @minimum_password_length),
+            input_html: { autocomplete: "new-password" }
+          = f.input :password_confirmation,
+            label: "Confirm your new password",
+            required: true,
+            input_html: { autocomplete: "new-password" }
+        .form-actions
+          = f.button :submit, 'Change Password'

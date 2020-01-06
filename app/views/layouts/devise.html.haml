@@ -1,0 +1,15 @@
+!!! 5
+%html{lang: "en"}
+  %head
+    = render partial: 'layouts/head'
+  %body.page-devise
+    = render "layouts/nav_unauthenticated"
+    = render partial: 'layouts/flash'
+    .container
+      .row
+        .col-md-5.ml-auto.mr-auto
+          .card.mt-5
+            .card-body.text-dark
+              = yield
+          .mt-3.mb-3.text-center
+            = render "devise/shared/links"
