@@ -31,43 +31,48 @@ b3.users << [u4]
 u1.update!(default_bucket: b1)
 u2.update!(default_bucket: b1)
 
-doc = File.open('/Users/trooney/www/codelog/seed/bookmarks.html') { |f| Nokogiri::HTML(f) }
+begin
+  File.open('/Users/trooney/www/codelog/seed/bookmarks.html') do |f|
+    Nokogiri::HTML(f).css('dl > dl').map do |dl|
+      heading = dl.previous_sibling.css('h3').first
+      tag_name = heading.content.strip
 
-doc.css('dl > dl').map do |dl|
-  heading = dl.previous_sibling.css('h3').first
-  tag_name = heading.content.strip
 
+      if tag_name.casecmp?('lamic') || tag_name.casecmp?('psy') || tag_name.casecmp?('rental')
+        next
+      end
 
-  if tag_name.casecmp?('lamic') || tag_name.casecmp?('psy') || tag_name.casecmp?('rental')
-    next
+      b1.tag_list.add(heading.content.strip, parse: true)
+      b1.save!
+
+      dl.css('a')[0...10].map do |el|
+        href = el['href']
+        ts = el['add_date']
+        title = el.content.strip.tr('|', '\|')
+
+        content = [
+          title,
+          '',
+          "<#{href}>"
+        ].join("\n")
+
+        b = Note.new(bucket: b1, text_blob: content, creator: u1, created_at: Time.at(ts.to_i) )
+        b.set_tag_list_on(b1.tag_context, tag_name)
+        b.save!
+      end
+    end
+
+    b1.users.each do |u|
+      b1.notes.last(5).each do |n|
+        Star.create!(bucket: b1, note: n, creator: u)
+      end
+    end
+
   end
+rescue Errno::ENOENT => _es
+end 
 
-  b1.tag_list.add(heading.content.strip, parse: true)
-  b1.save!
-
-  dl.css('a')[0...10].map do |el|
-    href = el['href']
-    ts = el['add_date']
-    title = el.content.strip.tr('|', '\|')
-
-    content = [
-      title,
-      '',
-      "<#{href}>"
-    ].join("\n")
-
-    b = Note.new(bucket: b1, text_blob: content, creator: u1, created_at: Time.at(ts.to_i) )
-    b.set_tag_list_on(b1.tag_context, tag_name)
-    b.save!
-  end
-end
-
-b1.users.each do |u|
-  b1.notes.last(5).each do |n|
-    Star.create!(bucket: b1, note: n, creator: u)
-  end
-end
-
+Bucket.reindex
 Note.reindex
 
-CodelogSeed.populate
+# CodelogSeed.populate

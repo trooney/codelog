@@ -1,6 +1,4 @@
 class Api::Buckets::NotesController < ::Api::Buckets::ApplicationController
-  protect_from_forgery with: :null_session
-
   before_action :load_note, only: [:update, :show, :trash]
 
   rescue_from ActionController::ParameterMissing, with: :handle_bad_request

@@ -1,6 +1,4 @@
 class Api::Buckets::StarsController < ::Api::Buckets::ApplicationController
-  skip_before_action :verify_authenticity_token
-
   before_action :load_star, only: [:destroy]
 
   rescue_from ActionController::ParameterMissing, with: :handle_bad_request

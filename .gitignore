@@ -37,6 +37,9 @@ yarn-debug.log*
 
 .idea/*
 
+# SimpleCov
+coverage/
+
 # CodeLog seed stuff
 /seed/*.html
 /seed/*.txt
