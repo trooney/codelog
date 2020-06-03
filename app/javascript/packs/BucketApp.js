@@ -1,5 +1,5 @@
 import { hot } from 'react-hot-loader/root'
-import React, { useState, useReducer, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import classNames from 'classnames'
 
@@ -10,8 +10,7 @@ import 'brace/theme/github'
 import parseISO from 'date-fns/parseISO'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 
-import { Provider } from 'react-redux'
-import { useSelector, useDispatch } from 'react-redux'
+import { Provider, useSelector, useDispatch } from 'react-redux'
 
 import {
   appSlice,
@@ -120,6 +119,7 @@ const SidebarContainer = () => {
   }
   const handleNewNoteClick = () => {
     dispatch(dataSlice.actions.newNote())
+    dispatch(dataSlice.actions.clearQuery())
   }
 
   const handleAllNotesClick = () => {
@@ -397,6 +397,8 @@ const Editor = () => {
 
   const canStar = !!currentNote
   const isStarred = currentNote && currentNote.star
+
+  console.log(currentNote && currentNote.star)
 
   const handleAceOnChange = val => {
     setEditorContent(val)

@@ -3,7 +3,7 @@ import React from 'react'
 import { render } from 'react-dom'
 import { configureStore, getDefaultMiddleware } from 'redux-starter-kit'
 
-import {appSlice, dataSlice, entitySlice } from './store'
+import { appSlice, dataSlice, entitySlice } from './store'
 
 import { filter, mapTo, take, finalize, distinctUntilChanged, share, tap, delay } from 'rxjs/operators'
 import { createEpicMiddleware, combineEpics } from 'redux-observable'
@@ -13,7 +13,7 @@ import { ofType } from 'redux-observable'
 import { from, of, concat } from 'rxjs'
 import { debounceTime, map, switchMap, switchAll, mergeMap, startsWith, endsWith, delayWhen } from 'rxjs/operators'
 import { ajax } from 'rxjs/ajax'
-import axios from "axios";
+import axios from "axios"
 
 const note = {
   bucketId: 5,

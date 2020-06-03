@@ -8,7 +8,7 @@ gem 'searchkick'
 gem "haml-rails", "~> 2.0"
 gem 'acts-as-taggable-on', git: 'https://github.com/mbleigh/acts-as-taggable-on.git', branch: 'master'
 gem 'sidekiq'
-gem 'bootstrap', '~> 4.3.1'
+gem 'bootstrap', '~> 4.5.0'
 gem 'discard', '~> 1.0'
 gem 'simple_form'
 gem 'default_value_for'

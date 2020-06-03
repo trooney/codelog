@@ -70,9 +70,10 @@ begin
 
   end
 rescue Errno::ENOENT => _es
-end 
+  puts "Bookmarks not found"
+end
 
 Bucket.reindex
 Note.reindex
 
-# CodelogSeed.populate
+CodelogSeed.populate
