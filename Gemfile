@@ -1,14 +1,14 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '2.6.3'
+ruby '2.6.5'
 
 gem 'devise'
 gem 'searchkick'
 gem "haml-rails", "~> 2.0"
 gem 'acts-as-taggable-on', git: 'https://github.com/mbleigh/acts-as-taggable-on.git', branch: 'master'
 gem 'sidekiq'
-gem 'bootstrap', '~> 4.3.1'
+gem 'bootstrap', '~> 4.5.0'
 gem 'discard', '~> 1.0'
 gem 'simple_form'
 gem 'default_value_for'
@@ -20,7 +20,7 @@ gem 'kramdown'
 gem 'kramdown-parser-gfm'
 gem 'rouge'
 
-gem 'rails', '~> 6.0.0'
+
 gem 'sqlite3', '~> 1.4'
 gem 'puma', '~> 3.11'
 gem 'sass-rails', '~> 6'
@@ -52,9 +52,9 @@ group :development do
   gem 'web-console', '>= 3.3.0'
 end
 
-
 group :test do
   gem 'capybara', '>= 2.15'
+  gem "codecov", "~> 0.1.16", require: false
   gem 'minitest-matchers_vaccine'
   gem 'mocha', '~> 1.5.0'
   gem 'poltergeist'

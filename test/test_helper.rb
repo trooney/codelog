@@ -3,6 +3,9 @@ require_relative '../config/environment'
 require 'rails/test_help'
 require 'mocha/minitest'
 
+require 'simplecov'
+SimpleCov.start 'rails'
+
 # require 'webmock/minitest'
 # WebMock.disable_net_connect!(allow: [
 #     -> (uri) { puts uri.to_str; !uri.to_str.match(/localhost\:9200/) }
@@ -24,5 +27,18 @@ Shoulda::Matchers.configure do |config|
   config.integrate do |with|
     with.test_framework :minitest
     with.library :rails
+  end
+end
+
+class ActiveSupport::TestCase
+  parallelize_setup do |worker|
+    Searchkick.index_suffix = worker
+
+    # reindex models
+    Bucket.reindex
+    Note.reindex
+
+    # and disable callbacks
+    Searchkick.disable_callbacks
   end
 end

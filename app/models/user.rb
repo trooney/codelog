@@ -10,7 +10,7 @@ class User < ApplicationRecord
   has_many :bucket_users
   has_many :buckets, through: :bucket_users
 
-  belongs_to :default_bucket, class_name: 'Bucket', optional: true
+  belongs_to :default_bucket, class_name: 'Bucket'
 
   validates :full_name, presence: true
   validates :email, presence: true

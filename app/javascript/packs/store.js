@@ -50,9 +50,7 @@ export const dataSlice = createSlice({
     currentBucketId: null,
     currentTagId: null,
     currentNoteId: null,
-    query: '',
-
-    theSaveState: 'Unknown'
+    query: ''
   },
   reducers: {
     openBucket: (state, action) => {
@@ -80,23 +78,6 @@ export const dataSlice = createSlice({
     },
     clearQuery: state => {
       state.query = ''
-    },
-
-    theSaveState: (state, action) => {
-      // console.log('redux theSaveState', action.payload)
-      state.theSaveState = 'theSaveState is ' + action.payload.type
-    },
-    savesInProgress: (state, action) => {
-      // console.log('redux savesInProgress')
-      state.theSaveState = 'savesInProgress'
-    },
-    savesComplete: (state, action) => {
-      // console.log('redux savesComplete')
-      state.theSaveState = 'savesComplete'
-    },
-    editorKeyDown: state => {
-      console.log('editorKeyDown')
-    //   Do nothing
     }
   }
 })
@@ -125,7 +106,6 @@ export const entitySlice = createSlice({
       })
     },
     removeEntity: (state, action) => {
-      console.log(action.payload)
       const { entityType, entityId } = action.payload
 
       delete state[entityType][entityId]
@@ -151,24 +131,18 @@ export const entitySlice = createSlice({
 
       state[entityType] = []
     },
-    somethingElse: (state, action) => {
-      const { entityType, entity } = action.payload
-      console.log('SOMETHING ELSE', action.payload)
-      // state[entityType]
-    },
     addIndex: (state, action) => {
       const { indexType, entities } = action.payload
 
       entities.forEach(entity => {
         if (!state.indexes[indexType].includes(entity.id)) {
-          state.indexes[indexType].push(entity.id)
+          state.indexes[indexType].unshift(entity.id)
         }
       })
     },
     clearIndex: (state, action) => {
       const indexType = action.payload
 
-      console.log('clearIndex', indexType, original(state.indexes))
       state.indexes[indexType] = []
     },
     replaceIndex: (state, action) => {
@@ -180,7 +154,7 @@ export const entitySlice = createSlice({
       const { indexType, entityId } = action.payload
 
       if (!state.indexes[indexType].includes(entityId)) {
-        state.indexes[indexType].push(entityId)
+        state.indexes[indexType].unshift(entityId)
       }
     },
     removeFromIndex: (state, action) => {
@@ -350,15 +324,16 @@ export const starNote = () => {
   return async (dispatch, getState) => {
     const { currentBucketId, currentNoteId } = getState().data
 
-    dispatch(appSlice.actions.incrementRequestCounter())
-    await axios.post(`/api/buckets/${currentBucketId}/stars`, {
-      star: {
-        noteId: currentNoteId
-      }
+    requestSemaphore(dispatch, 'star', () => {
+      return axios.post(`/api/buckets/${currentBucketId}/stars`, {
+        star: {
+          noteId: currentNoteId
+        }
+      })
+    }).then(res => {
+      dispatch(entitySlice.actions.addToIndex({ indexType: 'starredNoteIds', entityId: currentNoteId }))
     })
-    dispatch(appSlice.actions.decrementRequestCounter())
 
-    dispatch(entitySlice.actions.addToIndex({ indexType: 'starredNoteIds', entityId: currentNoteId }))
   }
 }
 
@@ -366,11 +341,12 @@ export const unstarNote = () => {
   return async (dispatch, getState) => {
     const { currentBucketId, currentNoteId } = getState().data
 
-    dispatch(appSlice.actions.incrementRequestCounter())
-    await axios.delete(`/api/buckets/${currentBucketId}/stars/${currentNoteId}`)
-    dispatch(appSlice.actions.decrementRequestCounter())
+    requestSemaphore(dispatch, 'star', () => {
+      return axios.delete(`/api/buckets/${currentBucketId}/stars/${currentNoteId}`)
+    }).then(res => {
+      dispatch(entitySlice.actions.removeFromIndex({ indexType: 'starredNoteIds', entityId: currentNoteId }))
+    })
 
-    dispatch(entitySlice.actions.removeFromIndex({ indexType: 'starredNoteIds', entityId: currentNoteId }))
   }
 }
 
@@ -424,6 +400,11 @@ export const getTags = createSelector(
 export const getStarredNotes = createSelector(
   [state => state.entities.indexes.starredNoteIds, state => state.entities.notes],
   (index, notes) => index.map(id => notes[id] || {})
+)
+
+export const getUntaggedNotes = createSelector(
+  [state => Object.values(state.entities.notes)],
+  (notes) => notes.filter(note => note.tags.length === 0)
 )
 
 export const getSearchNotes = createSelector(

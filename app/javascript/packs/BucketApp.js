@@ -1,17 +1,18 @@
 import { hot } from 'react-hot-loader/root'
-import React, { useState, useReducer, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import classNames from 'classnames'
 
 import AceEditor from 'react-ace'
-import 'brace/mode/markdown'
-import 'brace/theme/github'
+import 'ace-builds/src-noconflict/mode-markdown'
+import 'ace-builds/src-noconflict/theme-github'
 
 import parseISO from 'date-fns/parseISO'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 
-import { Provider } from 'react-redux'
-import { useSelector, useDispatch } from 'react-redux'
+import {useDebounce, useDebounceCallback} from '@react-hook/debounce'
+
+import { Provider, useSelector, useDispatch } from 'react-redux'
 
 import {
   appSlice,
@@ -35,6 +36,7 @@ import {
   getBuckets,
   getTags,
   getStarredNotes,
+  getUntaggedNotes,
   getSearchNotes
 } from './store'
 
@@ -112,6 +114,7 @@ const SidebarContainer = () => {
   const buckets = useSelector(state => getBuckets(state))
   const starredNotes = useSelector(state => getStarredNotes(state))
   const tags = useSelector(state => getTags(state))
+  const untaggedNotes = useSelector(state => getUntaggedNotes(state))
 
   const [isSidebarVisible, setIsSidebarVisible] = useState(true)
 
@@ -120,6 +123,7 @@ const SidebarContainer = () => {
   }
   const handleNewNoteClick = () => {
     dispatch(dataSlice.actions.newNote())
+    dispatch(dataSlice.actions.clearQuery())
   }
 
   const handleAllNotesClick = () => {
@@ -146,6 +150,7 @@ const SidebarContainer = () => {
       buckets={buckets}
       tags={tags}
       starredNotes={starredNotes}
+      untaggedNotes={untaggedNotes}
       handleSidebarVisibleToggleClick={handleSidebarVisibleToggleClick}
       handleNewNoteClick={handleNewNoteClick}
       handleAllNotesClick={handleAllNotesClick}
@@ -161,6 +166,7 @@ const Sidebar = ({
   buckets,
   tags,
   starredNotes,
+  untaggedNotes,
   isSidebarVisible,
   handleSidebarVisibleToggleClick,
   handleNewNoteClick,
@@ -172,7 +178,6 @@ const Sidebar = ({
   const currentUser = useSelector(state => getCurrentUser(state))
   const currentBucket = useSelector(state => getCurrentBucket(state))
   const currentTag = useSelector(state => getCurrentTag(state))
-  const currentNote = useSelector(state => getCurrentNote(state))
 
   const currentBucketName = currentBucket && currentBucket.name
   const currentBucketFirstCharacter = currentBucket && currentBucket.name[0]
@@ -291,6 +296,16 @@ const Sidebar = ({
           listIcon="tags"
           initialItemsVisibilityState={true}
         />
+        <SidebarNavList
+          items={untaggedNotes}
+          activeItemId={-1}
+          name="Untagged"
+          contentField="textBlob"
+          itemClick={id => handleStarredNoteClick(id)}
+          itemIcon="dot-circle"
+          listIcon="database"
+          initialItemsVisibilityState={true}
+        />
       </section>
     </React.Fragment>
   )
@@ -339,15 +354,15 @@ const ExpandButton = ({ handleClick }) => {
   )
 }
 
-const StarButton = ({ canStar, isStarred, handleClick }) => {
+const StarButton = ({ canToggle, isToggled, handleClick }) => {
   const name = 'star'
-  const clickHandler = canStar ? handleClick : () => {}
+  const clickHandler = canToggle ? handleClick : () => {}
 
-  const togglerStyles = canStar ? { cursor: 'pointer' } : { opacity: 0.4 }
+  const togglerStyles = canToggle ? { cursor: 'pointer' } : { opacity: 0.4 }
 
   return (
     <span onClick={e => clickHandler()}>
-      <IconRegular name={name} style={togglerStyles} />
+      { isToggled ? <IconSolid name={name} style={togglerStyles} /> : <IconRegular name={name} style={togglerStyles} />}
     </span>
   )
 }
@@ -377,7 +392,6 @@ const Editor = () => {
   const currentBucketId = state.data.currentBucketId
   const currentNoteId = state.data.currentNoteId
   const currentNote = useSelector(state => getCurrentNote(state))
-  const theSaveState = state.data.theSaveState
 
   const [editorContent, setEditorContent] = useState('')
   const [editorTagBlob, setEditorTagBlob] = useState('')
@@ -390,21 +404,19 @@ const Editor = () => {
       setEditorContent('')
       setEditorTagBlob('')
     }
-  }, [currentNoteId])
+  }, [currentNote])
 
   const canTrash = !!currentNote
   const isTrashed = false
 
   const canStar = !!currentNote
-  const isStarred = currentNote && currentNote.star
+  const isStarred = state.entities.indexes.starredNoteIds.includes(currentNoteId)
 
-  const handleAceOnChange = val => {
+  const handleAceOnChange = useDebounceCallback((val) => {
+    console.log('change', val)
     setEditorContent(val)
-    dispatch(dataSlice.actions.editorKeyDown({
-      textBlob: val,
-      tagList: editorTagBlob
-    }))
-  }
+    // persistItem()
+  }, 1500)
 
   const handleOnTrashClick = () => {
     const result = confirm('Trash?')
@@ -441,14 +453,11 @@ const Editor = () => {
           <div>
             <ExpandButton name="expand-arrows-alt" handleClick={handleOnExpandClick} />
           </div>
-          <div>
-            {theSaveState}
-          </div>
           <div className="ml-auto d-flex">
             <div className="mr-3">
               <StarButton
-                canStar={canStar}
-                isStarred={isStarred}
+                canToggle={canStar}
+                isToggled={isStarred}
                 handleClick={handleOnStarClick}
               />
             </div>
@@ -721,16 +730,15 @@ const BucketApp = () => {
   useEffect(() => {
     dispatch(fetchAllBuckets())
     dispatch(fetchStarredNotes())
-  }, [])
+  }, [dispatch])
 
   useEffect(() => {
     if (!state.app.appLoaded) return
 
-    // console.log('UE2 - useEffect [bucketId, hasLoaded]', bucketId, hasLoaded)
     dispatch(dataSlice.actions.closeTag())
     dispatch(dataSlice.actions.clearQuery())
     // dispatch(dataSlice.actions.clearStarredNotes())
-  }, [dispatch, bucketId])
+  }, [dispatch, bucketId, state.app.appLoaded])
 
   useEffect(() => {
     if (query !== '') {
@@ -740,7 +748,7 @@ const BucketApp = () => {
     dispatch(fetchAllTags())
     dispatch(fetchStarredNotes())
     dispatch(fetchAllSearchResults())
-  }, [dispatch, bucketId])
+  }, [dispatch, bucketId, query])
 
   useEffect(() => {
     // console.log('useEffect [bucketId, tagId, query]', bucketId, tagId, query)

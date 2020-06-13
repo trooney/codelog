@@ -6,9 +6,7 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test 'associations' do
-    assert_must belongs_to(:bucket), @model
-    assert_must belongs_to(:note), @model
-    assert_must belongs_to(:default_bucket).class_name('Bucket'), @model
+    assert_must belong_to(:default_bucket).class_name('Bucket'), @model
 
     assert_must have_many(:buckets).through(:bucket_users), @model
     assert_must have_many(:bucket_users), @model

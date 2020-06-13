@@ -11,6 +11,7 @@ class Api::Buckets::SearchController < ::Api::Buckets::ApplicationController
         bucket_id: [@bucket.id],
         is_discarded: false
     }
+    
     search_params[:starring_user_ids] = [current_user.id] if params[:starred].present?
     search_params[:tag_ids] = @query_params[:tag_ids].split(',').map(&:to_i).reverse if @query_params[:tag_ids].present?
 

@@ -1,4 +1,7 @@
+[![CircleCI](https://circleci.com/gh/trooney/codelog.svg?style=shield)](https://circleci.com/gh/trooney/codelog)
+
 # Introduction
+
 CodeLog is a personal project and playground. It contains a decent amount of code and implementation. Please remember, this is _not_ a demonstration of professional programming style, file organization, or thorough testing. But it is enough to touch on the entire stack and give a general idea.
 
 #### Things Involved
