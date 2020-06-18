@@ -26,5 +26,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
   render(<App store={store} />, el)
 }, { passive: true })
-
-store.dispatch({ type: 'PING' })

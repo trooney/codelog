@@ -10,7 +10,7 @@ import 'ace-builds/src-noconflict/theme-github'
 import parseISO from 'date-fns/parseISO'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 
-import {useDebounce, useDebounceCallback} from '@react-hook/debounce'
+import { useDebounce, useDebounceCallback } from '@react-hook/debounce'
 
 import { Provider, useSelector, useDispatch } from 'react-redux'
 
@@ -31,6 +31,7 @@ import {
   getIsSearchFetching,
   getCurrentUser,
   getCurrentBucket,
+  getCurrentQuery,
   getCurrentTag,
   getCurrentNote,
   getBuckets,
@@ -413,7 +414,6 @@ const Editor = () => {
   const isStarred = state.entities.indexes.starredNoteIds.includes(currentNoteId)
 
   const handleAceOnChange = useDebounceCallback((val) => {
-    console.log('change', val)
     setEditorContent(val)
     // persistItem()
   }, 1500)
@@ -495,8 +495,7 @@ const Editor = () => {
 }
 
 const TagInput = ({ tagBlob, setTagBlob }) => {
-  const editorTagBlob = tagBlob
-  const tagBlobParts = editorTagBlob
+  const tagBlobParts = tagBlob
     .split(',')
     .map(s => (s || '').trim())
     .filter(str => str.length > 0)
@@ -580,11 +579,19 @@ const TagInput = ({ tagBlob, setTagBlob }) => {
 const Search = () => {
   const dispatch = useDispatch()
 
-  const query = useSelector(state => state.data.query)
+  const query = useSelector(state => getCurrentQuery(state))
   const currentTag = useSelector(state => getCurrentTag(state))
 
-  const handleTextFieldChange = queryStr => {
+  const [searchQuery, setSearchQuery] = useState(query)
+
+  const updateQuery = useDebounceCallback(queryStr => {
+    console.log('updating')
     dispatch(dataSlice.actions.setQuery(queryStr))
+  }, 500)
+
+  const handleTextFieldChange = queryStr => {
+    setSearchQuery(queryStr)
+    updateQuery(queryStr)
   }
 
   const handleClearClick = () => {
@@ -611,7 +618,7 @@ const Search = () => {
         <input
           type="text"
           className="form-control searchbox-text-field"
-          value={query}
+          value={searchQuery}
           onChange={e => handleTextFieldChange(e.target.value)}
           placeholder="Search"
         />
@@ -728,30 +735,49 @@ const BucketApp = () => {
   const isRequestPending = getIsRequestPending(state)
 
   useEffect(() => {
+    console.log('initial', [dispatch])
     dispatch(fetchAllBuckets())
+    dispatch(fetchAllTags())
     dispatch(fetchStarredNotes())
+    dispatch(fetchAllSearchResults()).then(() => {
+      dispatch(openFirstSearchResultNote())
+    })
   }, [dispatch])
 
   useEffect(() => {
     if (!state.app.appLoaded) return
+    console.log('useEffect load a [dispatch, bucketId, state.app.appLoaded]', [dispatch, bucketId, state.app.appLoaded])
 
     dispatch(dataSlice.actions.closeTag())
     dispatch(dataSlice.actions.clearQuery())
-    // dispatch(dataSlice.actions.clearStarredNotes())
-  }, [dispatch, bucketId, state.app.appLoaded])
-
-  useEffect(() => {
-    if (query !== '') {
-      dispatch(dataSlice.actions.clearQuery())
-    }
+    dispatch(dataSlice.actions.clearStarredNotes())
 
     dispatch(fetchAllTags())
     dispatch(fetchStarredNotes())
     dispatch(fetchAllSearchResults())
-  }, [dispatch, bucketId, query])
+  }, [dispatch, bucketId, state.app.appLoaded])
 
   useEffect(() => {
-    // console.log('useEffect [bucketId, tagId, query]', bucketId, tagId, query)
+    if (!state.app.appLoaded) return
+
+    console.log('useEffect tags [dispatch, tagId]', [dispatch, tagId])
+    dispatch(fetchAllSearchResults()).then(() => {
+      dispatch(openFirstSearchResultNote())
+    })
+  }, [dispatch, tagId, state.app.appLoaded])
+
+  useEffect(() => {
+    if (!state.app.appLoaded) return
+
+    console.log('useEffect query [dispatch, query]', [dispatch, tagId])
+    dispatch(fetchAllSearchResults()).then(() => {
+      // dispatch(openFirstSearchResultNote())
+    })
+
+  }, [dispatch, query, state.app.appLoaded])
+
+  useEffect(() => {
+    console.log('useEffect history [bucketId, tagId, query]', [bucketId, tagId, query])
     history.pushState(
       {},
       'TODO',
@@ -759,19 +785,8 @@ const BucketApp = () => {
     )
   }, [dispatch, bucketId, tagId, query])
 
-  useEffect(() => {
-    dispatch(fetchAllSearchResults()).then(() => {
-      dispatch(openFirstSearchResultNote())
-    })
-  }, [dispatch, tagId])
-
-  useEffect(() => {
-    // console.log('useEffect [query]', query)
-    dispatch(fetchAllSearchResults())
-  }, [dispatch, query])
-
   if (!state.app.appLoaded) {
-    dispatch(appSlice.actions.appLoaded())
+    // dispatch(appSlice.actions.appLoaded())
   }
 
   const loadingClasses = classNames('p-2 bg-dark text-light', { 'd-none': !isRequestPending })

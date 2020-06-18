@@ -54,6 +54,7 @@ export const dataSlice = createSlice({
   },
   reducers: {
     openBucket: (state, action) => {
+      const { bucketId, tagId, noteId, query } = action.payload
       state.currentBucketId = action.payload
       state.currentTagId = null
       state.currentNoteId = null
@@ -180,6 +181,15 @@ function requestSemaphore(dispatch, name, fn) {
   return promise
 }
 
+export const initializeStore = ({ currentUser, bucketId, tagId, query }) => {
+  return async function(dispatch, _getState) {
+    dispatch(appSlice.actions.setCurrentUser(currentUser))
+    dispatch(dataSlice.actions.openBucket(bucketId))
+    dispatch(dataSlice.actions.openTag(tagId))
+    dispatch(dataSlice.actions.setQuery(query))
+  }
+}
+
 export const fetchAllBuckets = () => {
   return async dispatch => {
     requestSemaphore(dispatch, 'buckets', () => {
@@ -210,7 +220,7 @@ export const fetchAllTags = function() {
 }
 
 export const fetchAllSearchResults = () => {
-  return async (dispatch, getState) => {
+  return (dispatch, getState) => {
     const query = getState().data.query
     const bucketId = getState().data.currentBucketId
     const tagId = getState().data.currentTagId || ''
@@ -371,6 +381,11 @@ export const getCurrentUser = createSelector(
 export const getCurrentBucket = createSelector(
   [state => state.data.currentBucketId, state => state.entities.buckets],
   (currentBucketId, buckets) => buckets[currentBucketId]
+)
+
+export const getCurrentQuery = createSelector(
+  [state => state.data.query],
+  (query) => query
 )
 
 export const getCurrentTag = createSelector(

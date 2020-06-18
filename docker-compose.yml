@@ -1,32 +1,38 @@
 version: '3'
 
 services:
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
-    environment:
-      - "discovery.type=single-node"
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ports:
-      - 9200:9200
-      - 9300:9300
+#  elasticsearch:
+#    image: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
+#    environment:
+#      - "discovery.type=single-node"
+#      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+#    ports:
+#      - 9200:9200
+#      - 9300:9300
 #  redis:
 #    image: redis:alpine
 #    ports:
 #      - 6379:6379
+
+  postgres:
+    image: postgres:12-alpine
+    environment:
+      POSTGRES_DB: codelog
+      POSTGRES_USER: codelog
+      POSTGRES_PASSWORD: codelog
   app:
     build:
       context: .
       dockerfile: ./docker/app/Dockerfile
     volumes:
       - .:/myapp
+      - bundler-cache:/bundle_cache
     ports:
       - 3000:3000
     environment:
       - WEBPACKER_DEV_SERVER_HOST=webpack
       - RAILS_ENV=production
       - SECRET_KEY_BASE='2be41531c49545b23fadd2807cc52f0ff2b2c9a6622253fee9a4936407b870e7f230046a0f471f1c668f73415d7a15b958de455289b3b646f22fb0713ab2aa08'
-      # - BUNDLE_PATH=/usr/local/bundle
-      - ELASTICSEARCH_URL=http://elasticsearch:9200
       - RAILS_MIN_THREADS=5
       - RAILS_MAX_THREADS=5
       - WEB_CONCURRENCY=2

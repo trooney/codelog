@@ -1,32 +1,34 @@
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby '2.6.5'
+ruby '2.7.1'
 
-gem 'devise'
-gem 'searchkick'
-gem "haml-rails", "~> 2.0"
 gem 'acts-as-taggable-on', git: 'https://github.com/mbleigh/acts-as-taggable-on.git', branch: 'master'
-gem 'sidekiq'
 gem 'bootstrap', '~> 4.5.0'
-gem 'discard', '~> 1.0'
-gem 'simple_form'
 gem 'default_value_for'
+gem 'devise'
+gem 'discard', '~> 1.0'
+gem 'faraday', '~> 0.15.4' # Faraday 0.16.0 not compatible with elasticsearch-transport
+gem 'haml-rails', '~> 2.0'
+gem 'pg'
+gem 'puma', '~> 3.11'
+gem 'sass-rails', '~> 6'
+gem 'sidekiq'
+gem 'simple_form'
+gem 'webpacker', '~> 4.0'
 
-gem "olive_branch"
+
+
+gem 'olive_branch'
 gem 'rack-cors'
 
 gem 'kramdown'
 gem 'kramdown-parser-gfm'
 gem 'rouge'
+gem 'pg_search'
 
 
-gem 'sqlite3', '~> 1.4'
-gem 'puma', '~> 3.11'
-gem 'sass-rails', '~> 6'
-gem 'webpacker', '~> 4.0'
 
-gem 'faraday', '~> 0.15.4' # Faraday 0.16.0 not compatible with elasticsearch-transport
 
 # gem 'redis', '~> 4.0'
 # Use Active Model has_secure_password
@@ -54,7 +56,7 @@ end
 
 group :test do
   gem 'capybara', '>= 2.15'
-  gem "codecov", "~> 0.1.16", require: false
+  gem 'codecov', '~> 0.1.16', require: false
   gem 'minitest-matchers_vaccine'
   gem 'mocha', '~> 1.5.0'
   gem 'poltergeist'

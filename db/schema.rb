@@ -10,11 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_08_17_221002) do
+ActiveRecord::Schema.define(version: 2020_06_13_231634) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_trgm"
+  enable_extension "plpgsql"
 
   create_table "bucket_users", force: :cascade do |t|
-    t.integer "bucket_id"
-    t.integer "user_id"
+    t.bigint "bucket_id"
+    t.bigint "user_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["bucket_id", "user_id"], name: "index_bucket_users_on_bucket_id_and_user_id", unique: true
@@ -29,8 +33,8 @@ ActiveRecord::Schema.define(version: 2019_08_17_221002) do
   end
 
   create_table "notes", force: :cascade do |t|
-    t.integer "bucket_id"
-    t.integer "creator_id"
+    t.bigint "bucket_id"
+    t.bigint "creator_id"
     t.string "title"
     t.text "text_blob"
     t.integer "lock_version"
@@ -44,7 +48,7 @@ ActiveRecord::Schema.define(version: 2019_08_17_221002) do
 
   create_table "short_urls", force: :cascade do |t|
     t.string "owner_type"
-    t.integer "owner_id"
+    t.bigint "owner_id"
     t.text "unique_key"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -52,9 +56,9 @@ ActiveRecord::Schema.define(version: 2019_08_17_221002) do
   end
 
   create_table "stars", force: :cascade do |t|
-    t.integer "bucket_id"
-    t.integer "note_id"
-    t.integer "creator_id"
+    t.bigint "bucket_id"
+    t.bigint "note_id"
+    t.bigint "creator_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["bucket_id", "note_id", "creator_id"], name: "index_stars_on_bucket_id_and_note_id_and_creator_id", unique: true
@@ -63,7 +67,7 @@ ActiveRecord::Schema.define(version: 2019_08_17_221002) do
     t.index ["note_id"], name: "index_stars_on_note_id"
   end
 
-  create_table "taggings", force: :cascade do |t|
+  create_table "taggings", id: :serial, force: :cascade do |t|
     t.integer "tag_id"
     t.string "taggable_type"
     t.integer "taggable_id"
@@ -82,7 +86,7 @@ ActiveRecord::Schema.define(version: 2019_08_17_221002) do
     t.index ["tagger_id"], name: "index_taggings_on_tagger_id"
   end
 
-  create_table "tags", force: :cascade do |t|
+  create_table "tags", id: :serial, force: :cascade do |t|
     t.string "name"
     t.datetime "created_at"
     t.datetime "updated_at"

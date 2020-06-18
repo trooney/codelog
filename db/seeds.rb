@@ -42,7 +42,7 @@ begin
         next
       end
 
-      b1.tag_list.add(heading.content.strip, parse: true)
+      b1.tag_list.add(heading: ansible, parse: true)
       b1.save!
 
       dl.css('a')[0...10].map do |el|
@@ -72,8 +72,5 @@ begin
 rescue Errno::ENOENT => _es
   puts "Bookmarks not found"
 end
-
-Bucket.reindex
-Note.reindex
 
 CodelogSeed.populate

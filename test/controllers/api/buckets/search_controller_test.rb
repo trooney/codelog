@@ -6,8 +6,6 @@ class Api::Buckets::SearchControllerTest < ActionDispatch::IntegrationTest
     @bucket = buckets(:for_johndoe)
 
     sign_in @user
-    Bucket.reindex
-    Note.reindex
   end
 
   test "search without query" do

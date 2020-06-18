@@ -1,5 +1,4 @@
 class Bucket < ApplicationRecord
-  searchkick
   acts_as_taggable
 
   has_many :notes

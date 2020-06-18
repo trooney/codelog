@@ -7,7 +7,7 @@ AllCops:
     - 'bin/**/*'
     - 'script/**/*'
     - 'db/**/*'
-  TargetRubyVersion: 2.6
+  TargetRubyVersion: 2.7
 
 Style/NegatedIf:
   Enabled: false

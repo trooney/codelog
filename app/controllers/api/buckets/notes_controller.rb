@@ -14,7 +14,6 @@ class Api::Buckets::NotesController < ::Api::Buckets::ApplicationController
     note.bucket = @bucket
     note.set_tag_list_on(@bucket.tag_context, tag_list)
     note.save!
-    note.reindex
 
     @bucket.tag_list.add(tag_list, parse: true)
     @bucket.save!
@@ -32,7 +31,6 @@ class Api::Buckets::NotesController < ::Api::Buckets::ApplicationController
     @note.assign_attributes(attrs)
     @note.set_tag_list_on(@bucket.tag_context, tag_list)
     @note.save!
-    @note.reindex
 
     @bucket.tag_list.add(tag_list, parse: true)
     @bucket.save!

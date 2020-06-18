@@ -1,27 +1,19 @@
 version: 2.1
 orbs:
-  ruby: circleci/ruby@0.1.2 
+  ruby: circleci/ruby@0.1.2
 
 jobs:
   build:
     docker:
-      - image: circleci/ruby:2.6.5-stretch-node
+      - image: circleci/ruby:2.7.1-buster-node
       - image: circleci/postgres:9.6.2-alpine
         environment:
           - PGHOST: 127.0.0.1
           - PGUSER: root
-      - image: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
-        environment:
-            - cluster.name: elasticsearch
-            - transport.host: localhost
-            - network.host: 127.0.0.1
-            - http.port: 9200
-            - discovery.type: single-node
-            - ES_JAVA_OPTS: -Xms512m -Xmx512m
+      - image: postgres:12-alpine
     parallelism: 1
     environment:
       RAILS_ENV: test
-      ELASTICSEARCH_URL: http://localhost:9200
     executor: ruby/default
     steps:
       - checkout
@@ -30,7 +22,7 @@ jobs:
             - bundler-v1-{{ checksum "Gemfile.lock" }}
             - bundler-v1-
       - run: gem install bundler:2.1.4
-      
+
       - run: bundle install --clean --path vendor/bundle
 
       - save_cache:
@@ -40,15 +32,13 @@ jobs:
 
       - run:
           name: Wait for DB
-          command: dockerize -wait tcp://localhost:5432 -timeout 1m 
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
 
       - run:
           name: Wait for Elastic Search
           command: dockerize -wait tcp://localhost:9200 -timeout 1m
 
       - run: bundle exec rake db:create db:schema:load db:seed --trace
-      # - run : bundle exec rake searchkick:reindex CLASS=Bucket
-      # - run : bundle exec rake searchkick:reindex CLASS=Note
       - run: bin/rails test
       - store_artifacts:
           path: coverage

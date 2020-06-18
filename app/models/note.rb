@@ -1,5 +1,9 @@
 class Note < ApplicationRecord
-  searchkick callbacks: false
+  include PgSearch::Model
+
+  pg_search_scope :search_text_blob_fulltext, against: :text_blob, using: { tsearch: { dictionary: 'english', prefix: true } }
+  pg_search_scope :search_text_blob_trigram, against: :text_blob, using: { trigram: { word_similarity: true } }, ranked_by: ":trigram"
+
   acts_as_taggable
 
   include Discard::Model
@@ -12,18 +16,13 @@ class Note < ApplicationRecord
   has_many :starring_users, through: :stars, source: :creator
 
   after_create :set_short_url
-  after_commit :sync_reindex
 
   validates :bucket, presence: true
   validates :creator, presence: true
   validates :text_blob, presence: true
 
-  def sync_reindex
-    reindex(nil, refresh: true)
-  end
-
   def set_short_url
-    @short_url = ShortUrl.create!(owner: self)
+    self.short_url = ShortUrl.create!(owner: self)
   end
 
   def html_blob

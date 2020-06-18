@@ -29,16 +29,3 @@ Shoulda::Matchers.configure do |config|
     with.library :rails
   end
 end
-
-class ActiveSupport::TestCase
-  parallelize_setup do |worker|
-    Searchkick.index_suffix = worker
-
-    # reindex models
-    Bucket.reindex
-    Note.reindex
-
-    # and disable callbacks
-    Searchkick.disable_callbacks
-  end
-end
