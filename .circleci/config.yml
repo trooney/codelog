@@ -6,14 +6,18 @@ jobs:
   build:
     docker:
       - image: circleci/ruby:2.7.1-buster-node
-      - image: circleci/postgres:9.6.2-alpine
+      - image: circleci/postgres:11.6-alpine
         environment:
-          - PGHOST: 127.0.0.1
-          - PGUSER: root
-      - image: postgres:12-alpine
+          POSTGRES_HOST: 127.0.0.1
+          POSTGRES_DB: codelog_test
+          POSTGRES_USER: codelog
+          POSTGRES_PASSWORD: codelog
     parallelism: 1
     environment:
       RAILS_ENV: test
+      PGHOST: 127.0.0.1
+      PGUSER: codelog
+      PGPASSWORD: codelog
     executor: ruby/default
     steps:
       - checkout
@@ -33,10 +37,6 @@ jobs:
       - run:
           name: Wait for DB
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
-
-      - run:
-          name: Wait for Elastic Search
-          command: dockerize -wait tcp://localhost:9200 -timeout 1m
 
       - run: bundle exec rake db:create db:schema:load db:seed --trace
       - run: bin/rails test

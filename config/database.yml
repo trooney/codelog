@@ -9,7 +9,6 @@ default: &default
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   timeout: 5000
   encoding: unicode
-  host: postgres
   username: codelog
   password: codelog
 
@@ -23,8 +22,8 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: codelog_dev_test
+  database: codelog_test
 
 production:
   <<: *default
-  database: codelog
+  database: codelog_prod
