@@ -54,7 +54,6 @@ export const dataSlice = createSlice({
   },
   reducers: {
     openBucket: (state, action) => {
-      const { bucketId, tagId, noteId, query } = action.payload
       state.currentBucketId = action.payload
       state.currentTagId = null
       state.currentNoteId = null
@@ -149,7 +148,9 @@ export const entitySlice = createSlice({
     replaceIndex: (state, action) => {
       const { indexType, entities } = action.payload
 
-      state.indexes[indexType] = entities.map(entity => entity.id)
+      const ids = entities.map(entity => entity.id)
+
+      state.indexes[indexType] = [...new Set(ids)]
     },
     addToIndex: (state, action) => {
       const { indexType, entityId } = action.payload
@@ -296,17 +297,22 @@ export const updateNote = (id, bucketId, textBlob, tagList) => {
   }
 }
 
-export const createNote = (bucketId, textBlob, tagList) => {
-  return async (dispatch, _getState) => {
+export const createNote = () => {
+  return async (dispatch, getState) => {
+    const { currentBucketId } = getState().data
+    const { currentTagId } = getState().data
+
+    const tagList = getState().entities.tags.filter(t => t && t.id === currentTagId).map(t => t.name).join(' ')
 
     requestSemaphore(dispatch, 'default', () => {
-      return axios.post(`/api/buckets/${bucketId}/notes`, {
-        note: { textBlob: textBlob, tagList: tagList }
+      return axios.post(`/api/buckets/${currentBucketId}/notes`, {
+        note: { textBlob: 'Untitled', tagList: tagList }
       })
-    }).then(async res => {
+    }).then(res => {
       dispatch(entitySlice.actions.addEntities({ entityType: 'tags', entities: res.data.note.tags }))
 
       const searchPromise = dispatch(fetchAllSearchResults())
+
       searchPromise.finally(() => {
         dispatch(dataSlice.actions.openNote(res.data.note.id))
       })

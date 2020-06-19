@@ -122,9 +122,11 @@ const SidebarContainer = () => {
   const handleSidebarVisibleToggleClick = () => {
     setIsSidebarVisible(!isSidebarVisible)
   }
+
   const handleNewNoteClick = () => {
-    dispatch(dataSlice.actions.newNote())
     dispatch(dataSlice.actions.clearQuery())
+
+    dispatch(createNote())
   }
 
   const handleAllNotesClick = () => {
@@ -372,7 +374,6 @@ const TrashButton = ({ canToggle, isToggled, handleClick }) => {
   const name = 'trash-alt'
   const clickHandler = canToggle ? handleClick : () => {}
 
-  // @TODO Properly dim (and add cursor states, etc)
   const togglerStyles = canToggle ? { cursor: 'pointer' } : { opacity: 0.4 }
 
   return (
@@ -394,8 +395,8 @@ const Editor = () => {
   const currentNoteId = state.data.currentNoteId
   const currentNote = useSelector(state => getCurrentNote(state))
 
-  const [editorContent, setEditorContent] = useState('')
-  const [editorTagBlob, setEditorTagBlob] = useState('')
+  const [editorContent, setEditorContent] = useDebounce('')
+  const [editorTagBlob, setEditorTagBlob] = useDebounce('')
 
   useEffect(() => {
     if (currentNote) {
@@ -415,7 +416,7 @@ const Editor = () => {
 
   const handleAceOnChange = useDebounceCallback((val) => {
     setEditorContent(val)
-    // persistItem()
+    dispatch(updateNote(currentNoteId, currentBucketId, val, editorTagBlob))
   }, 1500)
 
   const handleOnTrashClick = () => {
@@ -436,14 +437,6 @@ const Editor = () => {
 
   const handleOnExpandClick = () => {
     //  do nothing
-  }
-
-  const persistItem = () => {
-    if (state.data.currentNoteId) {
-      dispatch(updateNote(currentNoteId, currentBucketId, editorContent, editorTagBlob))
-    } else {
-      dispatch(createNote(currentBucketId, editorContent, editorTagBlob))
-    }
   }
 
   return (
@@ -484,9 +477,6 @@ const Editor = () => {
           editorProps={{ $blockScrolling: Infinity }}
         />
         <div className="d-flex p-1 border-top">
-          <button className="editor-save btn btn-sm btn-primary" onClick={e => persistItem()}>
-            Save
-          </button>
           <TagInput tagBlob={editorTagBlob} setTagBlob={setEditorTagBlob} />
         </div>
       </div>
@@ -495,12 +485,18 @@ const Editor = () => {
 }
 
 const TagInput = ({ tagBlob, setTagBlob }) => {
+  const dispatch = useDispatch()
+
   const tagBlobParts = tagBlob
     .split(',')
     .map(s => (s || '').trim())
     .filter(str => str.length > 0)
 
   const [tagInputText, setTagInputText] = useState('')
+
+  const updateTagBlob = (val) => {
+    setTagBlob(newVal)
+  }
 
   const addTextToTagBlob = str => {
     if (!tagBlobParts.includes(str)) {
@@ -550,6 +546,7 @@ const TagInput = ({ tagBlob, setTagBlob }) => {
 
   return (
     <div className="d-flex">
+      <IconSolid name="tags" className="mr-1 text-muted" />
       <div className="d-flex ml-2">
         {tagBlobParts.map((s, i) => (
           <div key={i} className="tag-chip d-flex align-items-center mr-2">
@@ -563,7 +560,6 @@ const TagInput = ({ tagBlob, setTagBlob }) => {
         ))}
       </div>
       <div className="tagbox-container d-flex align-items-center">
-        <IconSolid name="tags" className="mr-1 text-muted" />
         <input
           className="form-control form-control-sm tagbox-text-field"
           value={tagInputText}
@@ -735,7 +731,7 @@ const BucketApp = () => {
   const isRequestPending = getIsRequestPending(state)
 
   useEffect(() => {
-    console.log('initial', [dispatch])
+    console.log('useEffect dispatch', [dispatch])
     dispatch(fetchAllBuckets())
     dispatch(fetchAllTags())
     dispatch(fetchStarredNotes())
@@ -746,35 +742,26 @@ const BucketApp = () => {
 
   useEffect(() => {
     if (!state.app.appLoaded) return
-    console.log('useEffect load a [dispatch, bucketId, state.app.appLoaded]', [dispatch, bucketId, state.app.appLoaded])
+    console.log('useEffect bucketId [dispatch, appLoaded, bucketId]', [dispatch, bucketId, state.app.appLoaded])
 
     dispatch(dataSlice.actions.closeTag())
     dispatch(dataSlice.actions.clearQuery())
-    dispatch(dataSlice.actions.clearStarredNotes())
 
+    dispatch(fetchAllBuckets())
     dispatch(fetchAllTags())
     dispatch(fetchStarredNotes())
     dispatch(fetchAllSearchResults())
-  }, [dispatch, bucketId, state.app.appLoaded])
+  }, [dispatch, state.app.appLoaded, bucketId])
 
   useEffect(() => {
     if (!state.app.appLoaded) return
 
-    console.log('useEffect tags [dispatch, tagId]', [dispatch, tagId])
+    console.log('useEffect query [dispatch, appLoaded, tagId, query]', [dispatch, tagId])
     dispatch(fetchAllSearchResults()).then(() => {
       dispatch(openFirstSearchResultNote())
     })
-  }, [dispatch, tagId, state.app.appLoaded])
 
-  useEffect(() => {
-    if (!state.app.appLoaded) return
-
-    console.log('useEffect query [dispatch, query]', [dispatch, tagId])
-    dispatch(fetchAllSearchResults()).then(() => {
-      // dispatch(openFirstSearchResultNote())
-    })
-
-  }, [dispatch, query, state.app.appLoaded])
+  }, [dispatch, state.app.appLoaded, tagId, query])
 
   useEffect(() => {
     console.log('useEffect history [bucketId, tagId, query]', [bucketId, tagId, query])
@@ -786,7 +773,7 @@ const BucketApp = () => {
   }, [dispatch, bucketId, tagId, query])
 
   if (!state.app.appLoaded) {
-    // dispatch(appSlice.actions.appLoaded())
+    dispatch(appSlice.actions.appLoaded())
   }
 
   const loadingClasses = classNames('p-2 bg-dark text-light', { 'd-none': !isRequestPending })

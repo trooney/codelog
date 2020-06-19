@@ -4,31 +4,27 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '2.7.1'
 
 gem 'acts-as-taggable-on', git: 'https://github.com/mbleigh/acts-as-taggable-on.git', branch: 'master'
+gem 'bootsnap', '>= 1.4.2', require: false
 gem 'bootstrap', '~> 4.5.0'
 gem 'default_value_for'
 gem 'devise'
 gem 'discard', '~> 1.0'
 gem 'faraday', '~> 0.15.4' # Faraday 0.16.0 not compatible with elasticsearch-transport
 gem 'haml-rails', '~> 2.0'
+gem 'olive_branch'
 gem 'pg'
+gem 'pg_search'
 gem 'puma', '~> 3.11'
+gem 'rack-cors'
 gem 'sass-rails', '~> 6'
 gem 'sidekiq'
 gem 'simple_form'
 gem 'webpacker', '~> 4.0'
 
-
-
-gem 'olive_branch'
-gem 'rack-cors'
-
+# Parsers
 gem 'kramdown'
 gem 'kramdown-parser-gfm'
 gem 'rouge'
-gem 'pg_search'
-
-
-
 
 # gem 'redis', '~> 4.0'
 # Use Active Model has_secure_password
@@ -36,9 +32,6 @@ gem 'pg_search'
 
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
-
-# Reduces boot times through caching; required in config/boot.rb
-gem 'bootsnap', '>= 1.4.2', require: false
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

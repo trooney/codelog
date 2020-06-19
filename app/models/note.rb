@@ -19,7 +19,6 @@ class Note < ApplicationRecord
 
   validates :bucket, presence: true
   validates :creator, presence: true
-  validates :text_blob, presence: true
 
   def set_short_url
     self.short_url = ShortUrl.create!(owner: self)

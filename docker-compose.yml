@@ -1,19 +1,6 @@
 version: '3'
 
 services:
-#  elasticsearch:
-#    image: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
-#    environment:
-#      - "discovery.type=single-node"
-#      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-#    ports:
-#      - 9200:9200
-#      - 9300:9300
-#  redis:
-#    image: redis:alpine
-#    ports:
-#      - 6379:6379
-
   postgres:
     image: postgres:12-alpine
     environment:

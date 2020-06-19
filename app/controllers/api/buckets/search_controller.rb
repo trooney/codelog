@@ -6,7 +6,7 @@ class Api::Buckets::SearchController < ::Api::Buckets::ApplicationController
     tag_ids = (params.dig(:tag_ids) || '').split(',').uniq
     search_tags = @bucket.tags.where(id: tag_ids).pluck(:name).join(' ')
 
-    notes = Note.all.limit(100)
+    notes = Note.all.kept.limit(100)
 
     if params[:starred].present?
       notes = notes.joins(:stars).where(stars: { creator: current_user })
