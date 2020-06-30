@@ -395,8 +395,8 @@ const Editor = () => {
   const currentNoteId = state.data.currentNoteId
   const currentNote = useSelector(state => getCurrentNote(state))
 
-  const [editorContent, setEditorContent] = useDebounce('')
-  const [editorTagBlob, setEditorTagBlob] = useDebounce('')
+  const [editorContent, setEditorContent] = useState('')
+  const [editorTagBlob, setEditorTagBlob] = useState('')
 
   useEffect(() => {
     if (currentNote) {
@@ -414,9 +414,13 @@ const Editor = () => {
   const canStar = !!currentNote
   const isStarred = state.entities.indexes.starredNoteIds.includes(currentNoteId)
 
-  const handleAceOnChange = useDebounceCallback((val) => {
+  const handleAceChange = useDebounceCallback((val) => {
     setEditorContent(val)
     dispatch(updateNote(currentNoteId, currentBucketId, val, editorTagBlob))
+  }, 1500)
+
+  const updateTagBlob = useDebounceCallback((val) => {
+    dispatch(updateNote(currentNoteId, currentBucketId, editorContent, val))
   }, 1500)
 
   const handleOnTrashClick = () => {
@@ -472,7 +476,7 @@ const Editor = () => {
           mode="markdown"
           theme="github"
           showPrintMargin={false}
-          onChange={handleAceOnChange}
+          onChange={handleAceChange}
           name="UNIQUE_ID_OF_DIV"
           editorProps={{ $blockScrolling: Infinity }}
         />
@@ -485,7 +489,6 @@ const Editor = () => {
 }
 
 const TagInput = ({ tagBlob, setTagBlob }) => {
-  const dispatch = useDispatch()
 
   const tagBlobParts = tagBlob
     .split(',')
@@ -493,10 +496,6 @@ const TagInput = ({ tagBlob, setTagBlob }) => {
     .filter(str => str.length > 0)
 
   const [tagInputText, setTagInputText] = useState('')
-
-  const updateTagBlob = (val) => {
-    setTagBlob(newVal)
-  }
 
   const addTextToTagBlob = str => {
     if (!tagBlobParts.includes(str)) {
@@ -730,6 +729,7 @@ const BucketApp = () => {
 
   const isRequestPending = getIsRequestPending(state)
 
+  // Initial app load
   useEffect(() => {
     console.log('useEffect dispatch', [dispatch])
     dispatch(fetchAllBuckets())
@@ -740,9 +740,10 @@ const BucketApp = () => {
     })
   }, [dispatch])
 
+  // Switching buckets
   useEffect(() => {
     if (!state.app.appLoaded) return
-    console.log('useEffect bucketId [dispatch, appLoaded, bucketId]', [dispatch, bucketId, state.app.appLoaded])
+    // console.log('useEffect bucketId [dispatch, appLoaded, bucketId]', [dispatch, bucketId, state.app.appLoaded])
 
     dispatch(dataSlice.actions.closeTag())
     dispatch(dataSlice.actions.clearQuery())
@@ -756,7 +757,7 @@ const BucketApp = () => {
   useEffect(() => {
     if (!state.app.appLoaded) return
 
-    console.log('useEffect query [dispatch, appLoaded, tagId, query]', [dispatch, tagId])
+    // console.log('useEffect query [dispatch, appLoaded, tagId, query]', [dispatch, tagId])
     dispatch(fetchAllSearchResults()).then(() => {
       dispatch(openFirstSearchResultNote())
     })
@@ -764,7 +765,7 @@ const BucketApp = () => {
   }, [dispatch, state.app.appLoaded, tagId, query])
 
   useEffect(() => {
-    console.log('useEffect history [bucketId, tagId, query]', [bucketId, tagId, query])
+    // console.log('useEffect history [bucketId, tagId, query]', [bucketId, tagId, query])
     history.pushState(
       {},
       'TODO',

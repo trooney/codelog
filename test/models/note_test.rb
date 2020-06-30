@@ -13,6 +13,5 @@ class NoteTest < ActiveSupport::TestCase
   test 'validations' do
     assert_must validate_presence_of(:bucket), @model
     assert_must validate_presence_of(:creator), @model
-    assert_must validate_presence_of(:text_blob), @model
   end
 end

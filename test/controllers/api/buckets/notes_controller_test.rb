@@ -13,9 +13,4 @@ class Api::Buckets::NotesControllerTest < ActionDispatch::IntegrationTest
     get api_bucket_note_path(@bucket, @note)
     assert_response :success
   end
-
-  test "#create_fails" do
-    post api_bucket_notes_path(@bucket), params: {}
-    assert_response :bad_request
-  end
 end

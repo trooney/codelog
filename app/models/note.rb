@@ -15,16 +15,18 @@ class Note < ApplicationRecord
   has_many :stars
   has_many :starring_users, through: :stars, source: :creator
 
-  after_create :set_short_url
-
   validates :bucket, presence: true
   validates :creator, presence: true
+
+  after_create :set_short_url
 
   def set_short_url
     self.short_url = ShortUrl.create!(owner: self)
   end
 
   def html_blob
+    return nil if text_blob.blank?
+
     Kramdown::Document.new(text_blob, input: 'GFM').to_html
   end
 
