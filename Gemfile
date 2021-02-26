@@ -49,7 +49,7 @@ end
 
 group :test do
   gem 'capybara', '>= 2.15'
-  gem 'codecov', '~> 0.1.16', require: false
+  gem 'codecov', '~> 0.4.3', require: false
   gem 'minitest-matchers_vaccine'
   gem 'mocha', '~> 1.5.0'
   gem 'poltergeist'
